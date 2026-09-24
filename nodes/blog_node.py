@@ -1,6 +1,6 @@
-from src.states.blogstate import BlogState
+from states.blogstate import BlogState
 from langchain_core.messages import SystemMessage, HumanMessage
-from src.states.blogstate import Blog
+from states.blogstate import Blog
 
 class BlogNode:
     """

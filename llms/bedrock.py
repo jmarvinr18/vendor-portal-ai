@@ -10,18 +10,13 @@ class BedrockLLM:
 
         try:
 
-            # os.environ["AWS_ACCESS_KEY_ID"] = os.getenv("AWS_ACCESS_KEY_ID")
-            # os.environ["AWS_SECRET_ACCESS_KEY"] = os.getenv("AWS_SECRET_ACCESS_KEY")
-            # os.environ["AWS_DEFAULT_REGION"] = os.getenv("AWS_DEFAULT_REGION")
-
-
-            # print(f"AWS_ACCESS_KEY_ID: {os.environ["AWS_ACCESS_KEY_ID"]}")
-
             llm = ChatBedrockConverse(
                 model_id=model_name,
                 region_name="ap-southeast-1",
-                provider="anthropic",
-
+                # Nova is an Amazon model; with provider="anthropic" langchain-aws
+                # couldn't verify streaming support and fell back to non-streaming.
+                provider="amazon",
+                disable_streaming=False,
             )
 
             return llm

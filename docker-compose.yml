@@ -1,0 +1,18 @@
+services:
+  vendor-portal-agent:
+    build: .
+    image: vendor-portal-ai:latest
+    container_name: vendor-portal-agent
+    ports:
+      - "8082:8080"
+    # AWS_* creds + TAVILY_API_KEY. After ./refresh-aws-creds.sh, run
+    # `docker compose up -d` again - compose recreates the container with the new values.
+    env_file:
+      - .env
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8080/ping')"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 20s

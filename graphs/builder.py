@@ -1,21 +1,21 @@
 # from dotenv import load_dotenv
 # load_dotenv()
 
-from app.config import load_secrets
-load_secrets()
+# from config import load_secrets
+# load_secrets()
 
 from langgraph.graph import StateGraph, START, END
-from app.llms.groq import GroqLLM
-from app.states.agentstate import AgentState
-from app.nodes.agent_node import AgentNode
+# from llms.groq import GroqLLM
+from states.agentstate import AgentState
+from nodes.agent_node import AgentNode
 from langgraph.prebuilt import ToolNode
 from langgraph.prebuilt import tools_condition
-from app.tools.retriever import retriever_tool
-from app.tools.math_operations import add, multiply
-from app.tools.web_browse import get_tools, create_tool_node
-from app.tools.wikisearch import wikisearch
+from tools.retriever import retriever_tool
+from tools.math_operations import add, multiply
+from tools.web_browse import get_tools, create_tool_node
+from tools.wikisearch import wikisearch
 from IPython.display import Image, display
-from app.llms.bedrock import BedrockLLM
+from llms.bedrock import BedrockLLM
 from langgraph.checkpoint.memory import MemorySaver
 
 

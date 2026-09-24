@@ -1,0 +1,18 @@
+[project]
+name = "vendor-portal-ai"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "bedrock-agentcore>=1.23.1",
+    "boto3>=1.43.101",
+    "ipykernel>=7.3.0",
+    "langchain>=1.4.2",
+    "langchain-aws>=1.7.9",
+    "langchain-community>=0.4.2",
+    "langchain-tavily>=0.2.18",
+    "langgraph-cli[inmem]>=0.4.32",
+    "python-dotenv>=1.2.3",
+    "wikipedia>=1.4.0",
+]

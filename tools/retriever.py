@@ -1,6 +1,6 @@
 from langchain_core.tools.retriever import create_retriever_tool
-from app.embeddings.aws.s3vector import get_retriever
-# from app.embeddings.local.faiss import get_retriever
+from embeddings.aws.s3vector import get_retriever
+# from embeddings.local.faiss import get_retriever
 
 def retriever_tool():
     """

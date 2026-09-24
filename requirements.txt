@@ -1,0 +1,16 @@
+langchain
+langchain_community
+python-dotenv
+ipykernel
+langgraph-cli[inmem]
+wikipedia
+boto3
+bedrock-agentcore
+langchain-aws
+langchain-tavily
+
+
+# docker run -d -p 8082:8080 \
+#     -v .:/app \
+#     --name vendor-portal-agent \
+#     vendor-portal-agent:arm64
