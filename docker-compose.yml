@@ -9,6 +9,10 @@ services:
     # `docker compose up -d` again - compose recreates the container with the new values.
     env_file:
       - .env
+    # Lets the container reach MCP servers running on the host
+    # (built in on Docker Desktop; needed on plain Linux Docker).
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     restart: unless-stopped
     healthcheck:
       test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8080/ping')"]

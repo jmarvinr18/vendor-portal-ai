@@ -5,7 +5,7 @@ load_dotenv()
 # from config import load_secrets
 # load_secrets()
 
-def get_tools():
+def browse():
     """
     Return the list of tools to be used in the chatbot
     """

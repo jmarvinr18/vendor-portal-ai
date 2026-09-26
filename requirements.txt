@@ -8,7 +8,7 @@ boto3
 bedrock-agentcore
 langchain-aws
 langchain-tavily
-
+langchain-mcp-adapters
 
 # docker run -d -p 8082:8080 \
 #     -v .:/app \

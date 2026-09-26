@@ -1,4 +1,6 @@
 # agent.py
+import asyncio
+
 from bedrock_agentcore.runtime import BedrockAgentCoreApp
 
 from graphs.builder import GraphBuilder   # your existing graph
@@ -11,12 +13,25 @@ app = BedrockAgentCoreApp()
 
 
 llm = BedrockLLM().get_llm()
-graph = GraphBuilder(llm).setup_graph()
+graph = None
+_graph_lock = asyncio.Lock()
+
+
+async def get_graph():
+    """Build the graph on first request (MCP tools must be loaded with await)."""
+    global graph
+    if graph is None:
+        async with _graph_lock:
+            if graph is None:
+                graph = await GraphBuilder(llm).setup_graph()
+    return graph
 
 @app.entrypoint
 async def invoke(payload, context):
 
     print(f"PAYLOAD: {payload}")
+
+    graph = await get_graph()
 
     inputs = {"messages": [{"role": "user", "content": payload["message"]}]}
     config = {"configurable": {"thread_id": context.session_id}}

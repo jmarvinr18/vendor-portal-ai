@@ -4,17 +4,14 @@ from typing import Annotated, Sequence, Literal
 from langchain_core.prompts import PromptTemplate, ChatPromptTemplate
 from langchain_core.messages import BaseMessage, HumanMessage
 from langchain_core.output_parsers import StrOutputParser
-from tools.retriever import retriever_tool
-from tools.math_operations import add, multiply
-from tools.web_browse import get_tools, create_tool_node
-from tools.wikisearch import wikisearch
 # from llms.groq import GroqLLM
 from llms.bedrock import BedrockLLM
 
 class AgentNode:
 
-    def __init__(self):
-        
+    def __init__(self, tools):
+        self.tools = tools
+
         # self.llm = GroqLLM().get_llm()
         self.llm = BedrockLLM().get_llm()
 
@@ -36,7 +33,7 @@ class AgentNode:
 
         # model = model.bind_tools(tools)
 
-        llm_with_tools = self.llm.bind_tools([retriever_tool(), add, multiply, get_tools()])
+        llm_with_tools = self.llm.bind_tools(self.tools)
 
         response = llm_with_tools.invoke(messages)
 
