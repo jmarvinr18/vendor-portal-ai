@@ -572,6 +572,12 @@ source = { registry = "https://pypi.org/simple" }
 sdist = { url = "https://files.pythonhosted.org/packages/e6/79/d4f20e91327c98096d605646bdc6a5ffedae820f38d378d3515c42ec5e60/forbiddenfruit-0.1.4.tar.gz", hash = "sha256:e3f7e66561a29ae129aac139a85d610dbf3dd896128187ed5454b6421f624253", size = 43756, upload-time = "2021-01-16T21:03:35.401Z" }
 
 [[package]]
+name = "fpdf"
+version = "1.7.2"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/37/c6/608a9e6c172bf9124aa687ec8b9f0e8e5d697d59a5f4fad0e2d5ec2a7556/fpdf-1.7.2.tar.gz", hash = "sha256:125840783289e7d12552b1e86ab692c37322e7a65b96a99e0ea86cca041b6779", size = 39504, upload-time = "2015-01-21T00:07:47.493Z" }
+
+[[package]]
 name = "frozenlist"
 version = "1.8.0"
 source = { registry = "https://pypi.org/simple" }
@@ -2692,6 +2698,7 @@ source = { virtual = "." }
 dependencies = [
     { name = "bedrock-agentcore" },
     { name = "boto3" },
+    { name = "fpdf" },
     { name = "ipykernel" },
     { name = "langchain" },
     { name = "langchain-aws" },
@@ -2707,6 +2714,7 @@ dependencies = [
 requires-dist = [
     { name = "bedrock-agentcore", specifier = ">=1.23.1" },
     { name = "boto3", specifier = ">=1.43.101" },
+    { name = "fpdf", specifier = ">=1.7.2" },
     { name = "ipykernel", specifier = ">=7.3.0" },
     { name = "langchain", specifier = ">=1.4.2" },
     { name = "langchain-aws", specifier = ">=1.7.9" },

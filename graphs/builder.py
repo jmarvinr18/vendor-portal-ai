@@ -13,6 +13,7 @@ from tools.retriever import retriever_tool
 from tools.math_operations import add, multiply
 from tools.web_browse import browse, create_tool_node
 from tools.wikisearch import wikisearch
+from tools.create_file import create_pdf_report
 
 from langgraph.prebuilt import tools_condition
 from llms.bedrock import BedrockLLM
@@ -31,30 +32,30 @@ class GraphBuilder:
         Build a graph to generate blogs based on topic
         """
 
-        client = MultiServerMCPClient({
-            "pg-tools": {
-                "transport": "streamable_http",
-                "url": os.getenv("PG_TOOLS_MCP_URL", "http://host.docker.internal:54901/mcp"),
-            },
-            "devsecops": {
-                "transport": "streamable_http",
-                "url": os.getenv("DEVSECOPS_MCP_URL", "http://host.docker.internal:59229/mcp"),
-            }            
+        # client = MultiServerMCPClient({
+        #     "pg-tools": {
+        #         "transport": "streamable_http",
+        #         "url": os.getenv("PG_TOOLS_MCP_URL", "http://host.docker.internal:59079/mcp"),
+        #     },
+        #     "devsecops": {
+        #         "transport": "streamable_http",
+        #         "url": os.getenv("DEVSECOPS_MCP_URL", "http://host.docker.internal:57197/mcp"),
+        #     }            
 
-        })      
+        # })      
 
-        mcp_tools = await client.get_tools()  
+        # mcp_tools = await client.get_tools()  
 
-        print(f"TOOLS: {mcp_tools}")
+        # print(f"TOOLS: {mcp_tools}")
 
-        self.agent_node_obj = AgentNode(mcp_tools + [retriever_tool(), add, multiply, browse()])
+        self.agent_node_obj = AgentNode([retriever_tool(), add, multiply, browse(), create_pdf_report])
 
         # Nodes
         # Define the nodes we will cycle between
         self.graph.add_node("agent", self.agent_node_obj.invoke_agent)
 
         # agent
-        toolnode = ToolNode(mcp_tools + [retriever_tool(), add, multiply, browse()], handle_tool_errors=True)
+        toolnode = ToolNode([retriever_tool(), add, multiply, browse(), create_pdf_report], handle_tool_errors=False)
         
 
         self.graph.add_node("retrieve_tool", toolnode)

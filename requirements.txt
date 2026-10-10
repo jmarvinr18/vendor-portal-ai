@@ -9,7 +9,7 @@ bedrock-agentcore
 langchain-aws
 langchain-tavily
 langchain-mcp-adapters
-
+fpdf
 # docker run -d -p 8082:8080 \
 #     -v .:/app \
 #     --name vendor-portal-agent \

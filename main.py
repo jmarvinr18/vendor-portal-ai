@@ -1,13 +1,13 @@
 # agent.py
 import asyncio
-
 from bedrock_agentcore.runtime import BedrockAgentCoreApp
+import json, os, boto3
 
 from graphs.builder import GraphBuilder   # your existing graph
 from llms.bedrock import BedrockLLM
 from streaming import stream_answer
-# from config import load_secrets
-# load_secrets()
+from config import load_secrets
+load_secrets()
 app = BedrockAgentCoreApp()
 
 
@@ -26,10 +26,10 @@ async def get_graph():
                 graph = await GraphBuilder(llm).setup_graph()
     return graph
 
+
 @app.entrypoint
 async def invoke(payload, context):
 
-    print(f"PAYLOAD: {payload}")
 
     graph = await get_graph()
 
