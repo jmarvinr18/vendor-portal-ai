@@ -13,7 +13,7 @@ from tools.retriever import retriever_tool
 from tools.math_operations import add, multiply
 from tools.web_browse import browse, create_tool_node
 from tools.wikisearch import wikisearch
-from tools.create_file import create_pdf_report
+from tools.create_file import create_pdf_report, create_text_file
 
 from langgraph.prebuilt import tools_condition
 from llms.bedrock import BedrockLLM
@@ -48,14 +48,17 @@ class GraphBuilder:
 
         # print(f"TOOLS: {mcp_tools}")
 
-        self.agent_node_obj = AgentNode([retriever_tool(), add, multiply, browse(), create_pdf_report])
+        tools = [retriever_tool(), add, multiply, browse, create_pdf_report, create_text_file]
+
+        self.agent_node_obj = AgentNode(tools)
 
         # Nodes
         # Define the nodes we will cycle between
         self.graph.add_node("agent", self.agent_node_obj.invoke_agent)
 
         # agent
-        toolnode = ToolNode([retriever_tool(), add, multiply, browse(), create_pdf_report], handle_tool_errors=False)
+        # A failing tool returns an error ToolMessage to the agent instead of aborting the stream
+        toolnode = ToolNode(tools, handle_tool_errors=True)
         
 
         self.graph.add_node("retrieve_tool", toolnode)
@@ -81,7 +84,7 @@ class GraphBuilder:
                                          )
         # Edges taken after the `action` node is called.
         self.graph.add_conditional_edges(
-            "retrieve_tool", self.agent_node_obj.grade_documents)
+            "retrieve_tool", self.agent_node_obj.route_tools)
         self.graph.add_edge("generate", END)
         self.graph.add_edge("rewrite", "agent")
 

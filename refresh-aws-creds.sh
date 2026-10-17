@@ -12,7 +12,7 @@
 
 set -euo pipefail
 
-PROFILE="${AWS_PROFILE_NAME:-ai_developer_jmr}"
+PROFILE="${AWS_PROFILE_NAME:-krunchie-jmr-windesktop}"
 DURATION="${DURATION:-3600}"
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 ENV_FILE="${ENV_FILE:-$SCRIPT_DIR/.env}"

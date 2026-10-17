@@ -2,6 +2,8 @@ from langchain_core.tools.retriever import create_retriever_tool
 from embeddings.aws.s3vector import get_retriever
 # from embeddings.local.faiss import get_retriever
 
+RETRIEVER_TOOL_NAME = "retriever_vector_langchain_blog"
+
 def retriever_tool():
     """
     Retrieve from the vector store.
@@ -10,7 +12,7 @@ def retriever_tool():
 
     retriever_tool_langchain = create_retriever_tool(
         get_retriever(),
-        "retriever_vector_langchain_blog",
+        RETRIEVER_TOOL_NAME,
         "Search and run information about Langchain"
     )
 

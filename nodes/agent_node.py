@@ -2,10 +2,29 @@
 from pydantic import BaseModel, Field
 from typing import Annotated, Sequence, Literal
 from langchain_core.prompts import PromptTemplate, ChatPromptTemplate
-from langchain_core.messages import BaseMessage, HumanMessage
+from langchain_core.messages import BaseMessage, HumanMessage, AIMessage, ToolMessage
 from langchain_core.output_parsers import StrOutputParser
 # from llms.groq import GroqLLM
 from llms.bedrock import BedrockLLM
+from tools.retriever import RETRIEVER_TOOL_NAME
+
+
+def latest_question(messages):
+    """The most recent user message. messages[0] is the first question of the whole thread."""
+    for message in reversed(messages):
+        if isinstance(message, HumanMessage):
+            return message.content
+    return ""
+
+
+def latest_tool_results(messages):
+    """The ToolMessages produced by the last tool-calling step."""
+    results = []
+    for message in reversed(messages):
+        if not isinstance(message, ToolMessage):
+            break
+        results.append(message)
+    return list(reversed(results))
 
 class AgentNode:
 
@@ -38,6 +57,17 @@ class AgentNode:
         response = llm_with_tools.invoke(messages)
 
         return {"messages": [response]}
+
+
+    def route_tools(self, state) -> Literal["generate", "rewrite", "agent"]:
+        """
+            Only retriever results get graded. Other tools (browse, math, PDF) go back to the
+            agent so it can keep working with their output.
+        """
+        results = latest_tool_results(state["messages"])
+        if any(m.name == RETRIEVER_TOOL_NAME for m in results):
+            return self.grade_documents(state)
+        return "agent"
 
 
     def grade_documents(self, state) -> Literal["generate","rewrite"]:
@@ -74,10 +104,10 @@ class AgentNode:
         # Chain
         chain = prompt | llm_with_tool
         messages = state["messages"]
-        last_message = messages[-1]
 
-        question=messages[0].content
-        docs=last_message.content
+        question = latest_question(messages)
+        docs = "\n\n".join(m.content for m in latest_tool_results(messages)
+                           if m.name == RETRIEVER_TOOL_NAME)
 
         scored_result=chain.invoke({"question": question, "context":docs})
 
@@ -102,7 +132,7 @@ class AgentNode:
         """
         print("---TRANSFORM QUERY---")
         messages = state["messages"]
-        question = messages[0].content
+        question = latest_question(messages)
         msg = [
             HumanMessage(
                 content=f""" \n
@@ -111,13 +141,14 @@ class AgentNode:
                     \n ------- \n
                     {question}
                     \n ------- \n
-                    Formulate an improved question: 
+                    Reply with only the improved question, nothing else.
                 """,
             )
         ]
         # Grader
-        response = self.llm.invoke(msg)
-        return {"messages": [response]}
+        response = StrOutputParser().invoke(self.llm.invoke(msg))
+        # A HumanMessage so the agent treats it as the question to answer, not as its own reply
+        return {"messages": [HumanMessage(content=response)]}
 
     def generate(self, state):
         """
@@ -129,10 +160,8 @@ class AgentNode:
         """
         print("---GENERATE---")
         messages = state["messages"]
-        question = messages[0].content
-        last_message=messages[-1]
-
-        docs=last_message.content
+        question = latest_question(messages)
+        docs = "\n\n".join(m.content for m in latest_tool_results(messages))
 
         # Prompt
         prompt = ChatPromptTemplate.from_messages([
@@ -153,4 +182,4 @@ class AgentNode:
         # Run
         response = rag_chain.invoke({"context":docs, "question": question})
 
-        return {"messages": [response]}
+        return {"messages": [AIMessage(content=response)]}

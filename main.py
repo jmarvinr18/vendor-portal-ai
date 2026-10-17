@@ -34,7 +34,10 @@ async def invoke(payload, context):
     graph = await get_graph()
 
     inputs = {"messages": [{"role": "user", "content": payload["message"]}]}
-    config = {"configurable": {"thread_id": context.session_id}}
+    # The portal's conversation id. AgentCore sets context.session_id to the same value; a
+    # local run over plain HTTP doesn't, so the payload's copy is used first. Tools that store
+    # files read it to put them under reports/<sessionId>/, where the portal will serve them.
+    config = {"configurable": {"thread_id": payload.get("sessionId") or context.session_id}}
 
     # Returning an async generator makes AgentCore answer with text/event-stream.
     # Send {"stream": false} for the old single JSON response.
